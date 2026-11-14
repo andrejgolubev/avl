@@ -1,0 +1,13 @@
+python main.py --test
+test_delete_all_and_empty_tree (__main__.AVLTests.test_delete_all_and_empty_tree) ... ok
+test_delete_leaf_one_child_and_two_children (__main__.AVLTests.test_delete_leaf_one_child_and_two_children) ... ok
+test_delete_with_zero_child_balance (__main__.AVLTests.test_delete_with_zero_child_balance) ... ok
+test_duplicate_and_missing_key (__main__.AVLTests.test_duplicate_and_missing_key) ... ok
+test_four_rotation_cases (__main__.AVLTests.test_four_rotation_cases) ... ok
+test_random_operations_against_set (__main__.AVLTests.test_random_operations_against_set) ... ok
+test_search_floor_and_range (__main__.AVLTests.test_search_floor_and_range) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.129s
+
+OK
