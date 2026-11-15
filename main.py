@@ -110,12 +110,14 @@ class AVLTree:
                 return node.right, True
             if node.right is None:
                 return node.left, True
+            # Два сына: заменяем ключ минимальным в правом поддереве.
             successor = node.right
             while successor.left is not None:
                 successor = successor.left
             node.key = successor.key
             node.right, _ = self._delete(node.right, successor.key)
             removed = True
+        # После удаления баланс может нарушиться у нескольких предков.
         return self._rebalance(node), removed
 
     def contains(self, key):
