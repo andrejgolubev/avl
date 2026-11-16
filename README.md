@@ -38,8 +38,17 @@ npm run dev
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe main.py --test
 .\.venv\Scripts\python.exe -m unittest test_server -v
+.\.venv\Scripts\python.exe benchmark.py
 ```
-Семь тестов проверяют AVL-дерево, ещё шесть — API.
+Тесты проверяют AVL-дерево и API. Время измеряется без HTTP и SVG,
+каждый опыт повторяется трижды. CSV с повторами и JSON с параметрами сохраняются
+в `reports/assets`. Повторный запуск перезаписывает соответствующие результаты.
+
+Консольное приложение (из первой главы) не требует сторонних пакетов:
+```powershell
+python main.py
+Get-Content examples/queries.txt | python main.py
+```
 
 ## Пояснительная записка
 
