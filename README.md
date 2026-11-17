@@ -39,6 +39,7 @@ npm run dev
 .\.venv\Scripts\python.exe main.py --test
 .\.venv\Scripts\python.exe -m unittest test_server -v
 .\.venv\Scripts\python.exe benchmark.py
+.\.venv\Scripts\python.exe benchmark.py --large
 ```
 Тесты проверяют AVL-дерево и API. Время измеряется без HTTP и SVG,
 каждый опыт повторяется трижды. CSV с повторами и JSON с параметрами сохраняются

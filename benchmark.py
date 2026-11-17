@@ -100,7 +100,47 @@ def run(output):
     save(output, rows)
 
 
-def save(output, rows):
+def run_large(output):
+    rows = []
+    for n in [1000, 10000, 100000]:
+        for order in ["random", "sorted"]:
+            values = list(range(n))
+            if order == "random":
+                random.Random(42).shuffle(values)
+            rng = random.Random(17)
+            queries = [rng.randrange(n) for _ in range(5000)]
+            queries += [n + i for i in range(5000)]
+            removed = random.Random(23).sample(range(n), min(n, 10000))
+            for repeat in range(3):
+                tree = AVLTree()
+                start = time.perf_counter()
+                for key in values:
+                    tree.insert(key)
+                build_ms = (time.perf_counter() - start) * 1000
+                height = tree.height(tree.root)
+                tree.validate()
+                assert tree.inorder() == list(range(n))
+                start = time.perf_counter()
+                hits = sum(tree.contains(key) for key in queries)
+                search_ms = (time.perf_counter() - start) * 1000
+                assert hits == 5000
+                start = time.perf_counter()
+                for key in removed:
+                    tree.delete(key)
+                delete_ms = (time.perf_counter() - start) * 1000
+                tree.validate()
+                expected = set(range(n)) - set(removed)
+                assert tree.inorder() == sorted(expected)
+                rows.append(dict(n=n, order=order, structure="AVL", repeat=repeat + 1,
+                                 build_ms=build_ms, search_ms=search_ms, delete_ms=delete_ms,
+                                 delete_count=len(removed), height=height))
+            print(n, order, "AVL build ms:",
+                  round(statistics.median(r["build_ms"] for r in rows[-3:]), 3), flush=True)
+    save(output, rows, {"queries": 10000, "delete_seed": 23,
+                        "delete_count": "min(n, 10000)", "height": "before deletion"})
+
+
+def save(output, rows, extra=None):
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="", encoding="utf-8") as f:
@@ -110,11 +150,16 @@ def save(output, rows):
     metadata = {"python": platform.python_version(), "platform": platform.platform(),
                 "processor": platform.processor(), "repeats": 3, "seed": 42,
                 "query_seed": 17, "timer": "perf_counter", "unit": "ms"}
+    metadata.update(extra or {})
     output.with_suffix(".json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", default="reports/assets/comparison.csv")
+    parser.add_argument("--large", action="store_true", help="AVL на 1000–100000 ключах")
+    parser.add_argument("--output")
     args = parser.parse_args()
-    run(args.output)
+    if args.large:
+        run_large(args.output or "reports/assets/large.csv")
+    else:
+        run(args.output or "reports/assets/comparison.csv")
